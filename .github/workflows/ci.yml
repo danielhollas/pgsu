@@ -212,7 +212,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-        os: ['macos-13', 'windows-2023']
+        os: ['macos-13', 'windows-2025']
 
     steps:
     - uses: actions/checkout@v4
