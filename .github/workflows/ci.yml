@@ -2,6 +2,9 @@ name: ci
 
 on: [push, pull_request]
 
+env:
+  FORCE_COLOR: 1
+
 jobs:
 
   pre-commit:
@@ -34,8 +37,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.11]
-        os: [ubuntu-20.04, ubuntu-22.04]
+        python-version: [3.8, 3.12]
+        os: [ubuntu-22.04, ubuntu-24.04]
 
     runs-on: ${{ matrix.os }}
 
@@ -209,7 +212,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-        os: ['macos-12', 'windows-2022']
+        os: ['macos-13', 'windows-2023']
 
     steps:
     - uses: actions/checkout@v3

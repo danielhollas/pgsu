@@ -1,18 +1,12 @@
 # Install pre-commit hooks via: pre-commit install
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.5.0
+  rev: v5.0.0
   hooks:
   - id: double-quote-string-fixer
   - id: end-of-file-fixer
-  - id: fix-encoding-pragma
   - id: mixed-line-ending
   - id: trailing-whitespace
-
-- repo: https://github.com/asottile/setup-cfg-fmt
-  rev: v1.17.0
-  hooks:
-  - id: setup-cfg-fmt
 
 # yapf = yet another python formatter
 - repo: https://github.com/pre-commit/mirrors-yapf
@@ -28,6 +22,6 @@ repos:
   # pylint: static code analysis
   - id: pylint
     name: pylint
-    entry: pylint
+    entry: pylint -s n
     types: [python]
     language: system
