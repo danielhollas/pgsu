@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Connect to an existing PostgreSQL cluster as the `postgres` superuser and execute SQL commands."""
 __version__ = '0.3.0'
 
@@ -101,7 +100,7 @@ class PGSU:
         if 'database' in self.dsn:
             warnings.warn(
                 'The dsn contained the key `database` which was renamed to `dbname` in psycopg v3. '
-                'Renamed the database key to dbname', UserWarning)
+                'Renamed the database key to dbname', UserWarning, stacklevel=2)
             self.dsn['dbname'] = self.dsn.pop('database')
 
         self.try_sudo = try_sudo
@@ -322,7 +321,7 @@ def _execute_su_psql(command, dsn, interactive=False):
     if 'database' in dsn:
         warnings.warn(
             'The dsn contained the key `database` which was renamed to `dbname` in psycopg v3. '
-            'Renamed the database key to dbname', UserWarning)
+            'Renamed the database key to dbname', UserWarning, stacklevel=3)
         dsn['dbname'] = dsn.pop('database')
 
     dbname = dsn.get('dbname')
