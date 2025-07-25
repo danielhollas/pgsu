@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Connect to an existing PostgreSQL cluster as the `postgres` superuser and execute SQL commands."""
 __version__ = '0.3.0'
 
