@@ -240,7 +240,7 @@ def _try_connect_psycopg(**kwargs):
     try:
         conn = connect(**kwargs)
         success = True
-        conn.close()
+        conn.close()  # pylint: disable=no-member
     except Exception:  # pylint: disable=broad-except
         LOGGER.debug('Unable to connect via psycopg')
         LOGGER.debug(traceback.format_exc())
@@ -261,13 +261,13 @@ def _execute_psyco(command, dsn):
     try:
         conn = psycopg.connect(**dsn)
         conn.autocommit = True
-        with conn.cursor() as cursor:
+        with conn.cursor() as cursor:  # pylint: disable=no-member
             cursor.execute(command)
             if cursor.description is not None:
                 output = cursor.fetchall()
     finally:
         if conn:
-            conn.close()
+            conn.close()  # pylint: disable=no-member
     return output
 
 

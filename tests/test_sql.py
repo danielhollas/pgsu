@@ -36,7 +36,7 @@ def test_grant_priv(pgsu, user, database):  # pylint: disable=unused-argument
         'dbname': database,
     }
     conn = psycopg.connect(**dsn)  # pylint: disable=missing-kwoa
-    conn.close()
+    conn.close()  # pylint: disable=no-member
 
 
 @contextmanager
