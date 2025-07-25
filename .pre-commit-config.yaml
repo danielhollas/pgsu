@@ -25,3 +25,11 @@ repos:
     entry: pylint -s n
     types: [python]
     language: system
+  # mypy: static type checking
+  - id: mypy
+    name: mypy
+    entry: mypy
+    args: [--config-file=pyproject.toml, --pretty, pgsu/]
+    language: python
+    types: [python]
+    pass_filenames: false

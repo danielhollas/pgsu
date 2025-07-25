@@ -65,12 +65,12 @@ class PGSU:
      * 'template1' is the modifiable template database (which you *can* connect to)
     """
     def __init__(self,
-                 interactive=False,
-                 quiet=True,
-                 dsn=None,
-                 determine_setup=True,
-                 try_sudo=DEFAULT_TRY_SUDO,
-                 postgres_unix_user=DEFAULT_POSTGRES_UNIX_USER):
+                 interactive: bool = False,
+                 quiet: bool = True,
+                 dsn: 'dict | None' = None,
+                 determine_setup: bool = True,
+                 try_sudo: bool = DEFAULT_TRY_SUDO,
+                 postgres_unix_user: str = DEFAULT_POSTGRES_UNIX_USER) -> None:
         """Store postgres connection info.
 
         :param interactive: use True for verdi commands
@@ -109,7 +109,7 @@ class PGSU:
         if determine_setup:
             self.determine_setup()
 
-    def execute(self, command, **kwargs):
+    def execute(self, command: str, **kwargs):
         """Execute postgres command using determined connection mode.
 
         :param command: A psql command line as a str
@@ -128,7 +128,7 @@ class PGSU:
             'Could not connect to PostgreSQL server using dsn={dsn}.\n' \
                 + 'Consider providing connection parameters via PGSU(dsn={...}).')
 
-    def determine_setup(self):
+    def determine_setup(self) -> bool:
         """Determine how to connect as the postgres superuser.
 
         Depending on how postgres is set up, psycopg can be used to create dbs and db users,
@@ -179,7 +179,7 @@ class PGSU:
         self.setup_fail_counter += 1
         return self._no_setup_detected()
 
-    def _no_setup_detected(self):
+    def _no_setup_detected(self) -> bool:
         """Print a warning message and calls the failed setup callback
 
         :returns: False, if no successful try.
@@ -193,14 +193,14 @@ class PGSU:
         return False
 
     @property
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """Whether successful way of connecting to PostgreSQL cluster has been determined.
         """
         return self.connection_mode in (PostgresConnectionMode.PSYCOPG,
                                         PostgresConnectionMode.PSQL)
 
 
-def prompt_for_dsn(dsn):
+def prompt_for_dsn(dsn: dict) -> dict:
     """
     Prompt interactively for postgres database connection details.
 
@@ -229,7 +229,7 @@ def prompt_for_dsn(dsn):
     return dsn_new
 
 
-def _try_connect_psycopg(**kwargs):
+def _try_connect_psycopg(**kwargs) -> bool:
     """
     try to start a psycopg connection.
 
@@ -247,7 +247,7 @@ def _try_connect_psycopg(**kwargs):
     return success
 
 
-def _execute_psyco(command, dsn):
+def _execute_psyco(command: str, dsn: dict):
     """
     executes a postgres commandline through psycopg
 
@@ -271,7 +271,7 @@ def _execute_psyco(command, dsn):
     return output
 
 
-def _sudo_exists():
+def _sudo_exists() -> bool:
     """
     Check that the sudo command can be found
 
@@ -287,7 +287,7 @@ def _sudo_exists():
     return False
 
 
-def _try_su_psql(interactive, dsn):
+def _try_su_psql(interactive: bool, dsn: dict) -> bool:
     """
     Try to run psql in a subprocess as a different UNIX user.
 
@@ -303,7 +303,9 @@ def _try_su_psql(interactive, dsn):
     return False
 
 
-def _execute_su_psql(command, dsn, interactive=False):
+def _execute_su_psql(command: str,
+                     dsn: dict,
+                     interactive: bool = False) -> list:
     """
     Executes an SQL command via ``psql`` as another system user in a subprocess.
 
@@ -347,6 +349,8 @@ def _execute_su_psql(command, dsn, interactive=False):
 
     # Note: This is *both* the UNIX user to become *and* the database user
     user = dsn.get('user')
+    if not user:
+        raise ValueError(f'Invalid user: {user}')
 
     # Build command line
     sudo_cmd = ['sudo']
@@ -377,15 +381,14 @@ def _execute_su_psql(command, dsn, interactive=False):
     if proc.stderr:
         LOGGER.warning(proc.stderr)
     proc.check_returncode()
-    result = proc.stdout
 
-    result = result.strip().split(os.linesep)
+    result = proc.stdout.strip().split(os.linesep)
     result = [i for i in result if i]
 
     return result
 
 
-def escape_for_bash(str_to_escape):
+def escape_for_bash(str_to_escape: str) -> str:
     """
     This function takes any string and escapes it in a way that
     bash will interpret it as a single string.
@@ -412,10 +415,13 @@ def escape_for_bash(str_to_escape):
     return f"'{escaped_quotes}'"
 
 
-def unique_list(non_unique_list):
+def unique_list(non_unique_list: list) -> list:
     """
     Return list with unique subset of provided list, maintaining list order.
     Source: https://stackoverflow.com/a/480227/1069467
     """
     seen = set()
-    return [x for x in non_unique_list if not (x in seen or seen.add(x))]
+    return [
+        x for x in non_unique_list
+        if not (x in seen or seen.add(x))  # type: ignore[func-returns-value]
+    ]
